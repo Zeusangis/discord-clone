@@ -1,18 +1,23 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getSession, updateSession } from "@/actions/auth/session";
 
-const publicRoutes = ["/sign-in", "/sign-up", "/"]; // Define your public routes
+const publicRoutes = ["/login", "/register"];
 
-export default function middleware(request: NextRequest) {
-  // Check if the current route is public
-  const pathname = request.nextUrl.pathname;
-  if (publicRoutes.includes(pathname)) {
-    return NextResponse.next(); // Allow access to public routes
+export async function middleware(request: NextRequest) {
+  const session = await getSession();
+
+  // Check if the current path is in the public routes
+  const isPublicRoute = publicRoutes.includes(request.nextUrl.pathname);
+
+  if (!session && !isPublicRoute) {
+    // Use the request.url to create an absolute URL for redirection
+    const loginUrl = new URL("/login", request.url);
+    return NextResponse.redirect(loginUrl);
   }
 
-  // Apply Clerk Middleware for protected routes
-  return clerkMiddleware()(request, {} as any);
+  const response = await updateSession(request);
+  return response;
 }
 
 export const config = {

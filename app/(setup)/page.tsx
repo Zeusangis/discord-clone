@@ -1,21 +1,31 @@
+import { initialProfile } from "@/actions/user/initial-profile";
+import { UserType } from "@/types/userType";
 import db from "@/lib/db";
-import initialProfile from "@/lib/initial-profile";
-
+import React from "react";
+import { redirect } from "next/navigation";
+import { InitialModal } from "@/components/modals/initial-modal";
 const SetupPage = async () => {
-  const profile = await initialProfile();
-  if (!profile) {
-    return <div>Error: Profile not found</div>;
+  const user: UserType = await initialProfile();
+  if (!user) {
+    return;
   }
-
   const server = await db.server.findFirst({
     where: {
       members: {
         some: {
-          id: profile.id,
+          id: user.id,
         },
       },
     },
   });
-  return <div>Create a server</div>;
+  if (server) {
+    return redirect(`/server/${server.id}`);
+  }
+  return (
+    <div>
+      <InitialModal />
+    </div>
+  );
 };
+
 export default SetupPage;

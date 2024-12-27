@@ -15,6 +15,11 @@ export async function middleware(request: NextRequest) {
     const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
+  if (session && isPublicRoute) {
+    // Use the request.url to create an absolute URL for redirection
+    const homeUrl = new URL("/", request.url);
+    return NextResponse.redirect(homeUrl);
+  }
 
   const response = await updateSession(request);
   return response;

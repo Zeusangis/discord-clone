@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-const lexend = Lexend({ subsets: ["latin"] });
+import { cn } from "@/lib/utils";
+const font = Lexend({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={lexend.className}>
+      <body className={cn(font.className, "bg-white dark:bg-[#313338] ")}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

@@ -39,7 +39,7 @@ export async function login(data: LoginFormData) {
   cookieStore.set("session", session, {
     expires,
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: true,
   });
   return {
     success: true,

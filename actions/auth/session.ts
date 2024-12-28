@@ -7,7 +7,6 @@ import { decrypt, encrypt } from "./jwt";
 export async function getSession() {
   const cookieStore = await cookies();
   const session = cookieStore.get("session")?.value;
-  console.log(session);
   if (!session) return null;
   return await decrypt(session);
 }

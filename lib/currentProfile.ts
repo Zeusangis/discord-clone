@@ -12,5 +12,6 @@ export const currentProfile = async () => {
       id: userId,
     },
   });
+  console.log(user);
   return user;
 };

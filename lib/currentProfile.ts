@@ -2,16 +2,17 @@ import { getSession } from "@/actions/auth/session";
 import db from "@/lib/db";
 
 export const currentProfile = async () => {
-  const { userId } = await getSession();
+  try {
+    const session = await getSession();
+    const user = await db.user.findUnique({
+      where: {
+        id: session?.id,
+      },
+    });
 
-  if (!userId) {
+    return user;
+  } catch (error) {
+    console.error("Error in currentProfile:", error);
     return null;
   }
-  const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
-  console.log(user);
-  return user;
 };

@@ -1,31 +1,31 @@
-import { initialProfile } from "@/actions/user/initial-profile";
-import { UserType } from "@/types/userType";
-import db from "@/lib/db";
-import React from "react";
 import { redirect } from "next/navigation";
+import db from "@/lib/db";
+import { initialProfile } from "@/actions/user/initial-profile";
 import { InitialModal } from "@/components/modals/initial-modal";
+import { SetupWrapper } from "./setUpWrapper";
+
 const SetupPage = async () => {
-  const user: UserType = await initialProfile();
-  if (!user) {
-    return;
+  const profile = await initialProfile();
+
+  if (!profile) {
+    return redirect("/login");
   }
+
   const server = await db.server.findFirst({
     where: {
       members: {
         some: {
-          id: user.id,
+          userId: profile.id,
         },
       },
     },
   });
+
   if (server) {
-    return redirect(`/server/${server.id}`);
+    return redirect(`/servers/${server.id}`);
   }
-  return (
-    <div>
-      <InitialModal />
-    </div>
-  );
+
+  return <SetupWrapper />;
 };
 
 export default SetupPage;

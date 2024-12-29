@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import uploadFile from "@/actions/fileserver/file";
 import { createDiscordServer } from "@/actions/discordserver/server";
+import { uploadImage } from "@/utils/upload";
 
 export const InitialModal = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -68,15 +69,18 @@ export const InitialModal = () => {
       }
 
       // Upload the image
-      const uploadResponse = await uploadFile(imageFile);
-      if (!uploadResponse.image_url) {
+      const formData = new FormData();
+      formData.append("file", imageFile);
+      const uploadResponse = await uploadImage(formData);
+      console.log(uploadResponse);
+      if (!uploadResponse.fileUrl) {
         throw new Error("Failed to upload image");
       }
 
       // Create the server
       const createServerResponse = await createDiscordServer(
         serverName,
-        uploadResponse.image_url
+        uploadResponse.fileUrl
       );
       if (!createServerResponse?.success) {
         throw new Error("Failed to create server");

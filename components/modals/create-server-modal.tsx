@@ -68,7 +68,6 @@ export const CreateServerModel = () => {
       const formData = new FormData();
       formData.append("file", imageFile);
       const uploadResponse = await uploadImage(formData);
-      console.log(uploadResponse);
       if (!uploadResponse.fileUrl) {
         throw new Error("Failed to upload image");
       }

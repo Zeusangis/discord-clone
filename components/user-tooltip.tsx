@@ -30,9 +30,9 @@ export const UserTooltip = ({
           side={side}
           align={align}
           onClick={onClick}
-          className="cursor-pointer"
+          className="cursor-pointer hover:bg-rose-500 transition-all"
         >
-          <p className="font-semibold text-sm capitalize">{label}</p>
+          <p className="font-semibold py-2 px-2 capitalize">{label}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

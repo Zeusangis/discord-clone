@@ -47,10 +47,15 @@ export async function login(data: LoginFormData) {
   };
 }
 
+// export async function logout() {
+//   const cookieStore = await cookies();
+//   const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+//   cookieStore.set("session", "", { expires: yesterday });
+// }
+
 export async function logout() {
-  const cookieStore = await cookies();
-  const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  cookieStore.set("session", "", { expires: yesterday });
+  const cookieStore = cookies();
+  cookieStore.delete("session");
 }
 
 export async function register(data: any) {

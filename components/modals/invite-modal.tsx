@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import {
   Dialog,
   DialogContent,
@@ -10,13 +11,38 @@ import { useModalStore } from "@/hooks/use-modal-store";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Copy, RefreshCcw } from "lucide-react";
+import { Check, Copy, RefreshCcw } from "lucide-react";
 import { useOrigin } from "@/hooks/use-origin";
+import { useState } from "react";
 
 export const InviteModal = () => {
-  const { isOpen, onClose, type } = useModalStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const { isOpen, onOpen, onClose, type, data } = useModalStore();
   const origin = useOrigin();
   const isModalOpen = isOpen && type === "invitePeople";
+  const { server } = data;
+  const inviteUrl = `${origin}/invite/${server?.inviteCode}`;
+  const [isCopied, setIsCopied] = useState(false);
+
+  const onCopy = () => {
+    navigator.clipboard.writeText(inviteUrl);
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 3000);
+  };
+
+  const onGenerate = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.patch(
+        `/api/servers/${server?.id}/invite-code`
+      );
+      onOpen("invitePeople", { server: response.data });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Dialog open={isModalOpen} onOpenChange={onClose}>
@@ -33,16 +59,22 @@ export const InviteModal = () => {
           <div className="flex items-center mt-2 gap-x-2">
             <Input
               className="bg-zinc-500/50 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0"
-              value="Invite Link"
+              value={inviteUrl}
             />
-            <Button size="icon">
-              <Copy className="w-4 h-4" />
+            <Button size="icon" disabled={isLoading} onClick={onCopy}>
+              {isCopied ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
             </Button>
           </div>
           <Button
+            disabled={isLoading}
             variant="link"
             size="sm"
             className="text-xs mt-4 text-zinc-500"
+            onClick={onGenerate}
           >
             Generate a new link
             <RefreshCcw className="w-4 h-4 ml-2" />

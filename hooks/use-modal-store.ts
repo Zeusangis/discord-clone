@@ -5,7 +5,7 @@ import { ServerWithMemberWithUser } from "@/lib/serverType";
 export type ModalType = "createServer" | "invitePeople";
 
 interface ModalData {
-  server?: ServerWithMemberWithUser;
+  server?: Server;
 }
 
 interface ModalStore {

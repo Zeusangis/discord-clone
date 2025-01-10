@@ -1,5 +1,6 @@
 "use server";
 
+import { currentProfile } from "@/lib/currentProfile";
 import prisma from "@/lib/db";
 import { getSession } from "../auth/session";
 import { SessionResponseType } from "@/types/sessionType";
@@ -57,3 +58,34 @@ export const createDiscordServer = async (name: string, imageUrl: string) => {
     };
   }
 };
+
+export async function updateInviteCode(serverId: string) {
+  try {
+    const user = await currentProfile();
+    if (!user) {
+      return { error: "Unauthorized" };
+    }
+    if (!serverId) {
+      return { error: "Server ID is missing" };
+    }
+
+    const server = await prisma.server.update({
+      where: {
+        id: serverId,
+        userId: user.id,
+      },
+      data: {
+        inviteCode: uuidv4(),
+      },
+    });
+
+    if (!server) {
+      return { error: "Server not found" };
+    }
+
+    return { success: true, server };
+  } catch (error) {
+    console.error("Failed to update invite code:", error);
+    return { error: "An unexpected error occurred" };
+  }
+}

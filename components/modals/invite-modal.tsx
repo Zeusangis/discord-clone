@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Copy, RefreshCcw } from "lucide-react";
 import { useOrigin } from "@/hooks/use-origin";
 import { useState } from "react";
+import { updateInviteCode } from "@/actions/discordserver/server";
 
 export const InviteModal = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -33,12 +34,13 @@ export const InviteModal = () => {
   };
 
   const onGenerate = async () => {
+    if (!server?.id) {
+      return;
+    }
     try {
       setIsLoading(true);
-      const response = await axios.patch(
-        `/api/servers/${server?.id}/invite-code`
-      );
-      onOpen("invitePeople", { server: response.data });
+      const response = await updateInviteCode(server?.id);
+      onOpen("invitePeople", { server: response.server });
     } catch (error) {
       console.error(error);
     }
